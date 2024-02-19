@@ -9,33 +9,26 @@ import com.heima.model.user.pojos.ApUser;
 import com.heima.user.mapper.ApUserMapper;
 import com.heima.user.service.ApUserService;
 import com.heima.utils.common.AppJwtUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Service
-@Transactional
-@Slf4j
 public class ApUserServiceImpl extends ServiceImpl<ApUserMapper, ApUser> implements ApUserService {
-    /**
-     * app端登录功能
-     *
-     * @param dto
-     * @return
-     */
+
     @Override
     public ResponseResult login(LoginDto dto) {
+
         //1.正常登录（手机号+密码登录）
         if (!StringUtils.isBlank(dto.getPhone()) && !StringUtils.isBlank(dto.getPassword())) {
             //1.1查询用户
             ApUser apUser = getOne(Wrappers.<ApUser>lambdaQuery().eq(ApUser::getPhone, dto.getPhone()));
             if (apUser == null) {
-                return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "用户不存在");
+                return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST,"用户不存在");
             }
 
             //1.2 比对密码
@@ -55,7 +48,7 @@ public class ApUserServiceImpl extends ServiceImpl<ApUserMapper, ApUser> impleme
         } else {
             //2.游客  同样返回token  id = 0
             Map<String, Object> map = new HashMap<>();
-            map.put("token", AppJwtUtil.getToken(0l));
+            map.put("token", AppJwtUtil.getToken(0L));
             return ResponseResult.okResult(map);
         }
     }
